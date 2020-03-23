@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/rf.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/chat/chat.css">
+</head>
+<body style="background-color: #5bc0de">
+<div class="row" style="width: 100%;background-color: rgba(240,248,255,0.31);height: 420px;overflow: scroll" id="chatlist">
+    <p align="center">资源聊天室</p>
+    <hr>
+
+    <!--此为资源上传的样式-->
+    <div class="col-md-12 row message" style="width: 100%;">
+        <div class="col-md-1">
+            <img src="../images/11.jpg" alt="" class="tou">
+        </div>
+        <div class="col-md-11 myleft">
+            <div class="col-md-12" style="color: #a1a1a1;font-size: 10px">我是作者</div>
+            <span class="othertext">欢迎来到微享云音聊天室,请文明用语(解决卡顿:请点击退出按钮退出聊天室哦)</span>
+            <div class="col-md-12 time">2018/11/1 12:12</div>
+        </div>
+    </div>
+    
+
+</div>
+<div class="row" style="width: 100%;padding-left: 16px">
+    <form class="form-inline" id="odk" onsubmit="return sendcommonpoll()">
+        <button type="button" class="btn btn-default" style="width: 10%;" id="shareresource">分享资源</button>
+        <input type="text" class="form-control" id="exampleInputEmail2" placeholder="我也要加入" style="width: 60%;"
+               minlength="1" maxlength="500">
+        <button type="submit" class="btn btn-default" style="width:29.3%;">发送(Enter)</button>
+    </form>
+</div>
+<div style="display: none" id="stoppoll">1</div>
+<div class="btn btn-default" style="
+    z-index: 20;
+    position: fixed;
+    top: 20%;
+    left: 87.4%;" onclick="outpoll()">退出聊天室
+</div>
+<!--音乐资源列表-->
+<div id="musiclistParent">
+
+
+</div>
+<script>
+    function initContent() {
+        $.ajax({
+            url: "/yx-chat/setNum",
+            method: "get",
+            statusCode: {
+                200: function (data) {
+                    poll();
+                }
+            }
+        })
+    }
+
+    function outpoll(num) {
+
+        $("#stoppoll").text('2');
+
+        if (num == undefined) {
+            alert('已退出,将不会接收到任何消息');
+        }
+    }
+
+    /*轮询加载内容体*/
+    function poll() {
+
+        if ($("#stoppoll").text() == '2') {
+            return;
+        }
+
+
+        $.ajax({
+            url: "/yx-chat/content",
+            method: "get",
+            statusCode: {
+                200: function (data) {
+                    console.log(data);
+
+                    if (data != '' && data != undefined) {
+
+                        var list = $("#chatlist");
+
+                        $(data).each(function (data) {
+                            /*判断是否是资源类型*/
+                            if (this.type == '1') {
+                                /*判断是否为个人消息*/
+                                if (this.ismycontent=='1'){
+                                    list.append("<div class='col-md-12 row message'>" +
+                                        "<div class='col-md-11 myright'>" +
+                                        "<span class='oneresource'><img src='"+this.musicbase.imgurl+"' alt='' class='tou'> <span>"+this.musicbase.musicname+"" +
+                                        "<span class='glyphicon glyphicon-play-circle mbo' aria-hidden='true' onclick='bofang2_1(this," + this.musicbase.mid + ")'></span>" +
+                                        "<span class='mid' value='" + this.musicbase.mid + "'></span>" +
+                                        "<span class='musicUrl' value='" + this.musicbase.musicurl + "'></span>" +
+                                        "<span class='imgUrl' value='" + this.musicbase.imgurl + "'></span>" +
+                                        "<span class='musicName' value='" + this.musicbase.musicname + "'></span>" +
+                                        "<span class='singer' value='" + this.musicbase.singer + "'></span>" +
+                                        "</span> </span>" +
+                                        "</div>" +
+                                        "<div class='col-md-1'><img src='"+this.user.timg+"'" +
+                                        "class='tou'>" +
+                                        "</div>" +
+                                        "</div>");
+                                } else {
+                                    list.append("    <div class='col-md-12 row message' style='width: 100%;'>" +
+                                        "        <div class='col-md-1'>" +
+                                        "            <img src='"+this.user.timg+"' alt='' class='tou'>" +
+                                        "        </div>" +
+                                        "        <div class='col-md-11 myleft'>" +
+                                        "            <div class='col-md-12' style='color: #a1a1a1;font-size: 10px'>"+this.user.loginname+"</div>" +
+                                        "            <span class='oneresource'><img src='"+this.musicbase.imgurl+"' alt='' class='tou'> <span>"+this.musicbase.musicname+"" +
+                                        "            <span class='glyphicon glyphicon-play-circle mbo' aria-hidden='true' onclick='bofang2_1(this," + this.musicbase.mid + ")'></span>" +
+                                        "            <span class='mid' value='" + this.musicbase.mid + "'></span>" +
+                                        "            <span class='musicUrl' value='" + this.musicbase.musicurl + "'></span>" +
+                                        "            <span class='imgUrl' value='" + this.musicbase.imgurl + "'></span>" +
+                                        "            <span class='musicName' value='" + this.musicbase.musicname + "'></span>" +
+                                        "            <span class='singer' value='" + this.musicbase.singer + "'></span>" +
+                                        "            </span> </span>" +
+                                        "            <div class='col-md-12 time'>"+this.sendtime+"</div>" +
+                                        "        </div>" +
+                                        "    </div>")
+                                }
+                                
+                                /*为普通类型*/
+                            } else {
+                                /*判断是否是个人消息*/
+                                if (this.ismycontent == '1') {
+
+                                    list.append('<div class="col-md-12 row message">' +
+                                        '        <div class="col-md-11 myright"><span class="mytext">' + this.sendcontent + '</span></div>' +
+                                        '        <div class="col-md-1">' +
+                                        '            <img src="' + this.user.timg + '" class="tou">' +
+                                        '        </div>' +
+                                        '    </div>');
+
+                                    /*为他人消息*/
+                                } else {
+                                    list.append('    <div class="col-md-12 row message" style="width: 100%;">' +
+                                        '        <div class="col-md-1">' +
+                                        '            <img src="' + this.user.timg + '"class="tou">' +
+                                        '        </div>' +
+                                        '        <div class="col-md-11 myleft">' +
+                                        '            <div class="col-md-12" style="color: #a1a1a1;font-size: 10px">' + this.user.loginname + '</div>' +
+                                        '            <span class="othertext">' + this.sendcontent + '</span>' +
+                                        '            <div class="col-md-12 time">' + this.sendtime + '</div>' +
+                                        '        </div>' +
+                                        '    </div>')
+                                }
+                            }
+                        });
+
+
+                        /*获取完毕,拉取滚动条*/
+                        var divscll = document.getElementById('chatlist');
+                        divscll.scrollTop = divscll.scrollHeight;
+                    }
+                    setTimeout(poll,200);
+
+                },
+                500: function (data) {
+                    setTimeout(poll,200);
+                }
+            }
+        })
+    }
+
+    function sendcommonpoll() {
+        $.ajax({
+            url: "/yx-chat/sendcommon",
+            method: "post",
+            data: {'content': $("#exampleInputEmail2").val()},
+            statusCode: {
+                201: function (data) {
+                    $("#exampleInputEmail2").val("");
+                }
+            }
+        });
+        return false;
+    }
+
+    function sendresource(num) {
+        $.ajax({
+            url: "/yx-chat/sendresource/" + num,
+            method: "get",
+            statusCode: {
+                200: function (data) {
+                    $("#musiclistParent").html("");
+                }
+            }
+        })
+    }
+
+    $(function () {
+        initContent();
+    })
+</script>
+<script src="../js/chat/shareresource.js"></script>
+</body>
+</html>

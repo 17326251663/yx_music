@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/rf.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <style>
+        input{
+            border: none;
+            outline: none;
+        }
+        .makewrite{
+            border-bottom: 1px #a1a1a1 solid;
+        }
+    </style>
+</head>
+<body>
+<div class="row" style="width: 100%;">
+
+    <div class="col-md-7 col-md-offset-5">
+        <form action="#" id="uptimgform" enctype="multipart/form-data" method="post">
+            <img src="../images/11.jpg" alt="头像" style="height: 150px;width: 150px;border-radius: 50%" id="upimg">
+            <p><button class="btn btn-default" style="width: 125px;margin-left: 15px;">更改头像:<input type="file" class="btn btn-default" title="更换头像" onchange="uptimg(this)" style="width: 100%;" value="" name="timg"></button></p>
+        </form>
+    </div>
+
+    <form action="#" id="usermsg" onsubmit="return upMyMsg()">
+        <div class="col-md-12">
+            <table class="table">
+                <tr>
+                    <td>账号:</td>
+                    <td><input type="text" name="loginid" value="" readonly class="touMing"></td>
+                    <td>昵称:</td>
+                    <td><input type="text" name="loginname" value="微享云用户" class="makewrite touMing"></td>
+                </tr>
+                <tr>
+                    <td>性别:</td>
+                    <td><input type="radio" name="gender" value="男" class="touMing">男&nbsp;&nbsp;<input type="radio" name="gender" value="女" class="touMing">女</td>
+                    <td>年龄:</td>
+                    <td><input type="text" name="age" value="" max="200" min="0" class="makewrite touMing"></td>
+                </tr>
+                <tr>
+                <td>手机号:</td>
+                <td><input type="number" name="telephonenumber" value="" readonly class="touMing"></td>
+                <td>邮箱:</td>
+                <td><input type="email" name="email" class="makewrite touMing" ></td>
+            </tr>
+                <tr>
+                    <td>vip等级:</td>
+                    <td><input type="number" name="vip" value="" readonly class="touMing"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>简介:</td>
+                    <td colspan="3"><textarea name="intro"  cols="21" rows="3" style="resize: none;overflow: hidden;width: 73.2%;" maxlength="200" class="touMing"></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <p align="center"><input type="submit" value="保存信息" class="btn btn-block touMing"></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+<script>
+    function uptimg(ele) {
+
+        var imgName = $(ele).val();
+
+        var objUrl = getObjectURL(ele.files[0]);
+        if (objUrl) {
+            $("#upimg").attr("src", objUrl);
+        }
+
+        //定义正则
+        var regex2 = /^.*\.png$/;
+        var regex3 = /^.*\.jpg$/;
+        var regex4 = /^.*\.gif$/;
+
+        if (regex2.test(imgName) || regex3.test(imgName) || regex4.test(imgName)) {
+        } else {
+            alert("图片格式只支持上传.png,.jpg,.gif格式文件");
+            return false;
+        }
+
+       $.ajax({
+            url:"/yx/uptimg",
+           cache: false,
+           data: new FormData($("#uptimgform")[0]),
+           processData: false,
+           contentType: false,
+           dataType:"text",
+           method:"post",
+           statusCode:{
+                200:function (data) {
+                    alert(data);
+                    initimg1();
+                },
+               500:function () {
+                   alert("更换失败");
+               }
+           }
+       })
+    }
+
+    //建立一個可存取到該file的url
+    function getObjectURL(file) {
+        var url = null;
+        if (window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file);
+        } else if (window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+
+    function initUserMsg() {
+        $.ajax({
+            url:"/yx/userMsg",
+            method:"get",
+            dataType:"json",
+            statusCode:{
+                200:function (data) {
+                    $("#usermsg input[name=loginid]").val(data.loginid);
+                    $("#usermsg input[name=loginname]").val(data.loginname);
+                    $("#usermsg input[name=loginpassword]").val(data.loginpassword);
+                    $("#usermsg input[name=age]").val(data.age);
+                    $("#usermsg input[name=telephonenumber]").val(data.telephonenumber);
+                    $("#usermsg input[name=email]").val(data.email);
+                    $("#usermsg textarea").val(data.intro);
+                    $("#usermsg input[name=vip]").val(data.vip);
+                    $("#upimg").prop("src",data.timg);
+
+                    $("#usermsg input[name=gender][value="+data.gender+"][type=radio]").prop("checked",true);
+
+                },
+                500:function () {
+
+                }
+            }
+        })
+    }
+
+    //修改账户信息
+    function upMyMsg(){
+
+        $.ajax({
+            url:"/yx/upUserMsg",
+            method:"put",
+            data: JSON.stringify($("#usermsg").serializeJson()),
+            contentType:"application/json;charset=utf-8",
+            dataType:"text",
+            statusCode:{
+                204:function () {
+                   alert("保存成功");
+                   initUserMsg();
+                },
+                500:function () {
+                    alert("保存失败");
+                    return false;
+                }
+            }
+
+        });
+
+        return false;
+
+    }
+
+    $(function () {
+        initUserMsg();
+    })
+</script>
+</body>
+</html>

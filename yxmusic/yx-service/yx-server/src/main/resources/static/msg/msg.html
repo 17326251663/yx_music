@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>歌曲信息</title>
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/rf.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            zoom: 50%;
+            width: 98%;
+            height: 98%;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.44);
+            border-radius: 1em;
+        }
+
+        ul li {
+            background-color: rgba(255, 0, 0, 0) !important;
+            border: rgba(0, 0, 0, 0) 1px solid !important;
+            color: #fafafa;
+        }
+
+        #umsg, .shadow {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, .1);
+        }
+
+        .pimg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: 50px;
+        }
+
+        .plq {
+            display: block;
+            position: relative;
+            top: -20px;
+            left: 150px;
+            font-size: 25px;
+        }
+
+        .time {
+            color: #a1a1a1;
+            font-size: 10px;
+            margin-left: 150px
+        }
+
+        .blur {
+            -webkit-filter: blur(50px);
+        }
+
+        .mpv {
+            position: absolute;
+            bottom: 0;
+            right: 30px;
+            font-size: 30px;
+        }
+
+        .zan:hover {
+            color: #7bff75;
+        }
+
+        .zan:active ,.loginname:hover{
+            color: orange;
+            cursor: pointer;
+        }
+
+        #username:hover {
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        #floatUserMsgPage {
+            position: fixed;
+            top: 3%;
+            left: 5%;
+            z-index: 12;
+            width: 90%;
+            height: 90%;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        .order1{
+            background: linear-gradient(135deg, rgba(255, 87, 51, 0.41) 0%, rgba(139, 195, 74, 0.27) 100%) !important;
+        }
+        .order2{
+            background: linear-gradient(135deg, rgba(255, 87, 51, 0.19) 0%, rgba(255, 219, 91, 0.12) 100%) !important;
+        }
+        .order3{
+            background: linear-gradient(135deg, rgba(255, 155, 93, 0.24) 0%, rgba(139, 195, 74, 0.17) 100%) !important;
+        }
+
+        .child{
+            padding-left: 166px;
+            color: white;
+        }
+
+        .addFriendList{
+            position: fixed !important;
+            left: 50% !important;
+            width: 1000px;
+            top: 35% !important;
+            height: 500px;
+            margin-left: -500px;
+            margin-top: -250px;
+            z-index: 208;
+            background-color: #e7e7e7 !important;
+        }
+
+        ::-webkit-scrollbar-track-piece { //滚动条凹槽的颜色，还可以设置边框属性
+        background-color:#f8f8f8;
+        }
+        ::-webkit-scrollbar {//滚动条的宽度
+        width:9px;
+            height:9px;
+        }
+        ::-webkit-scrollbar-thumb {//滚动条的设置
+        background-color:#dddddd;
+            background-clip:padding-box;
+            min-height:28px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background-color:#bbb;
+        }
+
+        *::-webkit-scrollbar {
+            width: 8px;
+        }
+        *::-webkit-scrollbar-track {
+            background-color: rgba(255, 0, 0, 0);
+            -webkit-border-radius: 2em;
+            -moz-border-radius: 2em;
+            border-radius:2em;
+        }
+        *::-webkit-scrollbar-thumb {
+            background-color: rgba(204, 204, 204, 0.61);
+            -webkit-border-radius: 2em;
+            -moz-border-radius: 2em;
+            border-radius:2em;
+        }
+    </style>
+    <script>
+        $(function () {
+
+            if (location.search.indexOf('mid') != -1) {
+                mid = location.search.split('=')[1];
+                $("#pinglunform input[name=mid]").val(mid);
+                msginit(mid);
+                initpunlun(1);
+            }
+
+        });
+
+        function msginit(mid) {
+
+            $("#pinglunform input[name=mid]").val(mid);
+
+            $.ajax({
+                method: "get",
+                url: "/yx-music/lookmusic/" + mid,
+                dataType: "json",
+                statusCode: {
+                    200: function (data) {
+
+                        $("#singer").text(data.singer);
+                        $("#ifyid").text(data.classify.ifyname);
+                        $("#username").text(data.user.loginname);
+                        $("#time").text(time(data.uploadtime));
+                        $("#bonum").text(data.playnum);
+                        $("#upnum").text(data.uploadnum);
+                        $(".bgt").prop("src", data.imgurl);
+                        $("#musicname").text(data.musicname);
+
+                        uidQ = data.uid;
+
+                        $("#username").click(function () {
+                            userMsg(data.uid);
+                        });
+
+                    },
+                    500: function () {
+                        alert('网络较慢,刷新试试?');
+                    }
+                }
+            })
+        }
+
+        function userMsg(uid) {
+
+            uidQ = uid;
+
+            $.ajax({
+                url: "/user/usermsg.html",
+                method: "get",
+                success: function (data) {
+                    //初始化容器
+                    $("#isPageParent").html('    <div class="alert alert-warning alert-dismissible" role="alert" id="floatUserMsgPage">\n' +
+                        '        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" style="    color: white;\n' +
+                        '    box-shadow: #ffffff -9px 15px 15px 20px;">&times;</span></button>\n' +
+                        '       <div class="row" id="userList">\n' +
+                        '           \n' +
+                        '       </div>\n' +
+                        '    </div>');
+                    //初始化内容
+                    $("#userList").html(data);
+                    otherUser(uid);
+
+                }
+            })
+        }
+
+        function getuid(uid) {
+            $.ajax({
+                url:"/yx-concern/lookConcern/"+uid,
+                method:"get",
+                statusCode:{
+                    200:function (data) {
+
+                        var guanzhu = $(".guanzhu");
+
+                        if (data == 'ok') {
+                            guanzhu.text('-取消关注');
+                            guanzhu.next().attr("value","/yx-concern/unConcern/"+uid);
+                        }else {
+                            guanzhu.text('+关注');
+                            guanzhu.next().attr("value","/yx-concern/concern/"+uid);
+                        }
+                    },
+                    500:function () {
+                        alert('服务器出错');
+                    }
+                }
+            })
+        }
+
+        function otherUser(uid) {
+
+            $.ajax({
+                url: "/yx/otherUser/" + uid,
+                method: "get",
+                dataType: "json",
+                statusCode: {
+                    200: function (data) {
+                        $(".other-tou").prop("src",data.user.timg);
+                        $(".other-loginname").text(data.user.loginname);
+                        $(".other-concern").text(data.usermsg.concernnum);
+                        $(".other-loginid").text(data.user.loginid);
+                        $(".other-fans").text(data.usermsg.fansnum);
+                        $(".other-loginname").append("<span style='color: red;padding-left: 10px;font-family: -webkit-pictograph;'>vip"+data.user.vip+"</span><span style='font-weight: 700;font-size: 25px;color: greenyellow;margin-left: 10px;cursor: pointer' title='添加好友' onclick='addFriend("+data.user.uid+", \""+data.user.loginname+"\","+data.user.loginid+")'>＋</span>");
+                        getuid(uid);
+                    },
+                    500: function () {
+                        alert("加载失败");
+                    }
+                }
+            });
+        }
+
+        function addFriend(uid,name,loginId) {
+            $(".firendName").text(name+"("+loginId+")");
+            $(".addFriend").css("display","block");
+            $("#friendId").val(uid);
+        }
+
+        function sendFriendRequest() {
+            $.ajax({
+                url:"/yx-friend/addFriend",
+                method:"post",
+                contentType:"application/json;charset=utf-8",
+                data:JSON.stringify($("#sendFriendRequest").serializeJson()),
+                statusCode:{
+                    201:function (data) {
+                        alert(data);
+                        $(".addFriend").css("display","none");
+                    }
+                }
+            })
+        }
+
+        function initpunlun(num) {
+            $.ajax({
+                url: "/yx-comment/select/" + $("#pinglunform input[name=mid]").val() + "/" + num,
+                method: "get",
+                dataType: "json",
+                statusCode: {
+                    200: function (data) {
+                        var list = $("#list ul");
+                        list.html("");
+
+                        if (data.total == 0) {
+                            list.append("<li>暂无评论,快来占个楼吧~</li>");
+                            return;
+                        }
+
+                        var num = 1;
+
+                        $(data.list).each(function () {
+                            list.append('<li class="list-group-item order'+num+'"><img src="' + this.user.timg + '" alt="" class="pimg">\n' +
+                                '                <span onclick="userMsg('+this.uid+')" class="loginname">' + this.user.loginname + '</span><span style="color: red;font-size: 30px;font-weight: 700;font-family: serif;margin-left: 10px">vip</span>\n' +
+                                '                    <span class="plq">' + this.content + '</span>\n' +
+                                '                    <div>\n' +
+                                '                        <span class="time">' + time(this.recoverytime) + '</span>\n' +
+                                '                        <div class="mpv">\n' +
+                                '                            <span href="#" title="展开" onclick="getchild('+this.cid+',1,this)" style="cursor: pointer">＋</span>\n|' +
+                                '                            <a href="#" title="举报  ">举报</a>\n|' +
+                                '                            <span title="点赞" class="zan" zhi="' + this.cid + '"><i class="glyphicon glyphicon-thumbs-up" aria-hidden="true" ></i>(<span class="zannum">' + this.cnum + '</span>)</span>\n' +
+                                '                            |<span onclick="huifu('+this.cid+','+this.mid+')"><i class="glyphicon glyphicon-comment" aria-hidden="true" title="评论"></i></span>\n' +
+                                '                        </div>\n' +
+                                '                    </div>\n' +
+                                '                </li><div class="child" ></div>');
+                            num++;
+                        });
+
+                        if(data.pages>1){
+
+                            list.append('<div class="col-md-4 col-md-offset-2"><nav> <ul class="pager" style="color: white !important;"> <li class="previous" disabled id="prePage"><a href="#"><span aria-hidden="true">&larr;</span>上一页</a></li>当前页:'+data.pageNum+',共'+data.pages+'页<li class="next" id="nextPage"><a href="#">下一页<span aria-hidden="true">&rarr;</span></a></li></ul> </nav>\n</div>');
+
+                            if (data.pages!=1){
+                                if (!data.isFirstPage){
+                                    $("#prePage").prop("disabled",false);
+                                    $("#prePage").find('a').prop("href",'javascript:initpunlun('+(data.prePage)+')');
+                                }
+                                if (!data.LastPage) {
+                                    $("#nextPage").prop("disabled",false);
+                                    $("#nextPage").find('a').prop("href",'javascript:initpunlun('+(data.lastPage)+')');
+                                }
+
+                            }
+
+                        }
+
+                        $(".zan").click(function () {
+                            dianzan($(this).attr("zhi"), this);
+                        })
+                    },
+                    500: function () {
+                        alert("浏览器出错,重新加载试试");
+                    }
+                }
+
+            })
+        }
+
+        function pinglun() {
+            if (/^\s*$/.test($("#pinglunform textarea").val())) {
+                alert("请先评论");
+                return false;
+            }
+            $.ajax({
+                url: "/yx-comment/comment/",
+                method: "put",
+                data: JSON.stringify($("#pinglunform").serializeJson()),
+                contentType: "application/json;charset=utf-8",
+                statusCode: {
+                    201: function () {
+                        initpunlun(1);
+                        $("#pinglunform textarea").val("")
+                    }
+                }
+            })
+        }
+
+        function dianzan(cid, ele) {
+
+            var znum = $(ele).find(".zannum");
+
+            $.ajax({
+                url: "/yx-comment/zan/" + cid,
+                method: "put",
+                dataType: "text",
+                statusCode: {
+                    200: function (data) {
+                        if (data == 'add') {
+                            znum.text(Number(znum.text()) + 1);
+                        } else {
+                            znum.text(Number(znum.text()) - 1);
+                        }
+                    }
+                }
+            })
+        }
+
+        function time(time) {
+            var date = new Date(time);
+            return date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate() + "  " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        }
+        function getchild(cid,num,ele) {
+            $.ajax({
+                url:"/yx-comment/child/"+cid+"/"+num,
+                method:"get",
+                statusCode:{
+                    200:function (data) {
+                        var clist = $(ele).parents("li").next();
+                        clist.html("回复：<br>");
+                        $(data.list).each(function () {
+                            clist.append('<li><span class="loginname" onclick="userMsg('+this.user.uid+')">'+this.user.loginname+':</span>'+this.content+'<span title="点赞" class="zan" zhi="' + this.cid + '" style="margin-left: 10px"><i class="glyphicon glyphicon-thumbs-up" aria-hidden="true" ></i>(<span class="zannum">' + this.cnum + '</span>)</span></li>');
+                        });
+                        $(".zan").click(function () {
+                            dianzan($(this).attr("zhi"), this);
+                        })
+                    }
+                }
+            })
+        }
+        function huifu(cid, mid) {
+            var content = prompt("请输入要回复的内容");
+            if (/^\s*$/.test(content)||content==null) {
+                return;
+            }
+            $.ajax({
+                url:"/yx-comment/huifu",
+                method:"post",
+                data:{
+                    isparent:cid,
+                    mid:mid,
+                    content:content
+                },
+                statusCode:{
+                    204:function () {
+                        alert("回复成功");
+                        initpunlun(1);
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+<body style="">
+<img src="../images/11.jpg" alt="" style="z-index: -1;position: absolute;width: 100%;height: 100%;padding: 0;margin: 0"
+     class="bgt blur">
+<div class="row"
+     style="padding: 100px 193px 20px 193px;box-sizing: border-box;margin: 0;background-color: #00000047;border-radius: 1em;">
+    <div class="col-md-4">
+        <div class="col-md-11" style="height: 660px;margin: 10px;box-sizing: border-box;"><img src="../images/img_6.jpg"
+                                                                                               alt=""
+                                                                                               style="width: 100%;height: 100%;"
+                                                                                               class="bgt"></div>
+        <div class="col-md-11" style="overflow:auto;height: 600px;margin: 10px;box-sizing: border-box;">
+            <ul style="font-size: 30px;font-family: Algerian;color: #dad1d1;height: 508.5px;overflow: auto;color: white;"
+                class="list-group shadow" id="umsg">
+                <li class="list-group-item" style="color: white">
+                    <h1 align="center"><p id="musicname">名字</p></h1>
+                </li>
+                <li class="list-group-item">歌手: <span id="singer">歌手</span></li>
+                <li class="list-group-item">分类: <span id="ifyid">伤感</span></li>
+                <li class="list-group-item">发布者: <span id="username">发布者</span></li>
+                <li class="list-group-item">发布时间: <span id="time">    发布时间</span></li>
+                <li class="list-group-item">播放量: <span id="bonum">播放量</span></li>
+                <li class="list-group-item">下载量: <span id="upnum">下载量</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-7 shadow" style="height: 1190.5px;margin-top: 10px;">
+        <form action="#" id="pinglunform">
+            <input type="hidden" name="mid">
+            <textarea name="content" class="form-control" cols="3" rows="5" minlength="10"
+                      maxlength="200" required placeholder="期待您的精彩评论(双击发表)"
+                      style="resize: none;
+                      border-radius: 1em;padding: 10px;box-sizing: border-box;
+                        background-color: #e2e2e21f;
+                        font-size: 25px;color: white"
+                      ondblclick="pinglun()"></textarea>
+        </form>
+        <br>
+        <h2 style="color:white;">精彩评论</h2>
+        <div id="list">
+            <ul class="list-group" style="height: 887px;overflow-x: hidden;">
+                <li class="list-group-item"><img src="../images/11.jpg" alt="" class="pimg">
+                    <span>名称</span><span
+                            style="color: red;font-size: 30px;font-weight: 700;font-family: serif;margin-left: 10px">vip</span>
+                    <span class="plq"></span>
+                    <div>
+                        <span class="time">8月8日</span>
+                        <div class="mpv">
+                            <a href="#">举报</a>
+                            <span ondblclick=""><i class="glyphicon glyphicon-thumbs-up" aria-hidden="true"
+                                                   alt="111"></i>1111</span>
+                            <span onclick=""><i class="glyphicon glyphicon-comment" aria-hidden="true"></i></span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <br>
+    </div>
+</div>
+
+<div style="position: absolute" id="isPageParent">
+
+</div>
+
+<div class="addFriend" style="display: none">
+    <div class="alert alert-warning alert-danger addFriendList" role="alert" style="position: fixed;left: 43%;top: 25%;"><button type="button" style="position: absolute;right: 0;top: 0;"aria-label="hide" onclick="javascript:$('.addFriend').css('display','none')"><span aria-hidden="true" style="font-size: 40px">&times;</span></button>
+            <form action="#" id="sendFriendRequest">
+                    <p align="center" style="font-weight: 800;">添加好友</p>
+                <hr>
+                <h3>您正在添加<span class="firendName"></span>为好友</h3>
+                <br>
+                <br>
+                <input type="hidden" name="acceptId" id="friendId">
+                <textarea name="friendRequest" id="friendRequest" cols="30" rows="10" placeholder="好友验证" style="resize: none;height: 213px;width: 100%;"></textarea>
+                <br>
+                <br>
+                <input type="button" onclick="sendFriendRequest()" style="width: 100%;" value="发送请求" class="btn btn-default">
+                </form> 
+        </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <style>
+
+        #right{
+            width: 87%;
+            height: 615px;
+            background-color: rgba(223, 254, 255, 0);
+            position: absolute;
+            left: 201px;
+            /* right: 382px; */
+            top: 0;
+            box-sizing: border-box;
+        }
+        .hed{
+            font-family: fantasy;
+            text-indent: 2em;
+            padding-bottom: 19.7px;
+        }
+        #list{
+            background-color: rgba(225, 113, 255, 0);
+            width: 100%;
+            height: 454px;
+            overflow: auto;
+        }
+        .panel-body i:hover{
+            cursor: pointer;
+            color: orange;
+        }
+        .bo{
+            margin-left: 76px;
+            float: right;
+            margin-right: 225px;
+        }
+        .bo_i{
+            position: relative;
+            top: 2px;
+        }
+        .collect{
+            float: right;
+            margin-right: 217px;
+
+         }
+        .panel-default:hover {
+            -webkit-box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            -webkit-transform: translate3d(0, -2px, 0);
+            transform: translate3d(0, -2px, 0);
+        }
+        .updateTime{
+            left: 76%;
+            color: #0000ff7a;
+        }
+
+    </style>
+</head>
+<body style="position: fixed;width: 100%;height: 100%;">
+
+
+        <div class="page-header ">
+            <h1 class="hed"><span style="font-family: cursive;font-weight: 800;font-size: 28px;/* line-height: 34px; */display: inline-block;">${user.loginName}</span><small>&</small>Example page header <small>Subtext for header</small></h1>
+        </div>
+<!--    列表下手-->
+    <div id="list" style="box-sizing: border-box">
+        <div class="panel panel-default col-xs-12 list">
+            <div class="panel-heading"  style="position: relative;opacity: 0.5;border-radius: 0 0px 20px 20px;">歌手: <span class="updateTime" style="position: relative">更新时间:</span></div>
+            <div class="panel-body">
+                歌曲名称:
+                <span class="collect" style="font-family: cursive"><i class="bo_i"></i>收藏</span>
+                <span style="font-family: cursive" class="bo">播放:<i class="bo_i"></i></span>
+            </div>
+
+<!--            这里是歌单的一些隐藏信息,如图片路径,图片id,歌曲路径-->
+            <span class="musicId" value=""></span>
+            <span class="musicUrl" value=""></span>
+            <span class="musicImg" value=""></span>
+        </div>
+
+        <div class="panel panel-default col-xs-12 list">
+            <div class="panel-heading"  style="position: relative;opacity: 0.5;border-radius: 0 0px 20px 20px;">歌手:</div>
+            <div class="panel-body">
+                歌曲名称:
+                <span class="collect" style="font-family: cursive"><i class="bo_i"></i>收藏</span>
+                <span style="font-family: cursive" class="bo">播放:<i class="bo_i"></i></span>
+            </div>
+
+<!--            这里是歌单的一些隐藏信息,如图片路径,图片id,歌曲路径-->
+            <span class="musicId" value=""></span>
+            <span class="musicUrl" value=""></span>
+            <span class="musicImg" value=""></span>
+        </div>
+        <div class="panel panel-default col-xs-12 list">
+            <div class="panel-heading"  style="position: relative;opacity: 0.5;border-radius: 0 0px 20px 20px;">歌手:</div>
+            <div class="panel-body">
+                歌曲名称:
+                <span class="collect" style="font-family: cursive"><i class="bo_i"></i>收藏</span>
+                <span style="font-family: cursive" class="bo">播放:<i class="bo_i"></i></span>
+            </div>
+
+<!--           这里是歌单的一些隐藏信息,如图片路径,图片id,歌曲路径-->
+            <span class="musicId" value=""></span>
+            <span class="musicUrl" value=""></span>
+            <span class="musicImg" value=""></span>
+        </div>
+        <div class="panel panel-default col-xs-12 list">
+            <div class="panel-heading"  style="position: relative;opacity: 0.5;border-radius: 0 0px 20px 20px;">歌手:</div>
+            <div class="panel-body">
+                歌曲名称:
+                <span class="collect" style="font-family: cursive"><i class="bo_i"></i>收藏</span>
+                <span style="font-family: cursive" class="bo">播放:<i class="bo_i"></i></span>
+            </div>
+
+<!--            这里是歌单的一些隐藏信息,如图片路径,图片id,歌曲路径-->
+            <span class="musicId" value=""></span>
+            <span class="musicUrl" value=""></span>
+            <span class="musicImg" value=""></span>
+        </div>
+        <div class="panel panel-default col-xs-12 list">
+            <div class="panel-heading"  style="position: relative;opacity: 0.5;border-radius: 0 0px 20px 20px;">歌手:</div>
+            <div class="panel-body">
+                歌曲名称:
+                <span class="collect" style="font-family: cursive"><i class="bo_i"></i>收藏</span>
+                <span style="font-family: cursive" class="bo">播放:<i class="bo_i"></i></span>
+            </div>
+
+<!--            这里是歌单的一些隐藏信息,如图片路径,图片id,歌曲路径-->
+            <span class="musicId" value=""></span>
+            <span class="musicUrl" value=""></span>
+            <span class="musicImg" value=""></span>
+        </div>
+        <div class="panel panel-default col-xs-12 list">
+            <div class="panel-heading"  style="position: relative;opacity: 0.5;border-radius: 0 0px 20px 20px;">歌手:</div>
+            <div class="panel-body">
+                歌曲名称:
+                <span class="collect" style="font-family: cursive"><i class="bo_i"></i>收藏</span>
+                <span style="font-family: cursive" class="bo">播放:<i class="bo_i"></i></span>
+            </div>
+
+<!--            这里是歌单的一些隐藏信息,如图片路径,图片id,歌曲路径-->
+            <span class="musicId" value=""></span>
+            <span class="musicUrl" value=""></span>
+            <span class="musicImg" value=""></span>
+        </div>
+        <div class="panel panel-default col-xs-12 list">
+            <div class="panel-heading"  style="position: relative;opacity: 0.5;border-radius: 0 0px 20px 20px;">歌手:</div>
+            <div class="panel-body">
+                歌曲名称:
+                <span class="collect" style="font-family: cursive"><i class="bo_i"></i>收藏</span>
+                <span style="font-family: cursive" class="bo">播放:<i class="bo_i"></i></span>
+            </div>
+
+<!--            这里是歌单的一些隐藏信息,如图片路径,图片id,歌曲路径-->
+            <span class="musicId" value=""></span>
+            <span class="musicUrl" value=""></span>
+            <span class="musicImg" value=""></span>
+        </div>
+<!--        列表结束-->
+    </div>
+
+<script>
+    // <!--播放-->
+    //播放按钮
+    function bofang(ele) {
+
+        //获取到资源路径
+        var val1 = $(ele).siblings(".mid").attr("value");
+        var val2 = $(ele).siblings(".musicUrl").attr("value");
+        var val3 = $(ele).siblings(".imgUrl").attr("value");
+        var val4 = $(ele).siblings(".musicName").attr("value");
+        var val5 = $(ele).siblings(".singer").attr("value");
+/*        <%--/!* $("body").css("background-image",'${pageContext.request.contextPath}'+val2);*!/--%>
+        <%--/!*    alert(ap3);--%>
+//        addCookie(val1);
+
+        <%--/!*  ap3.autoplay=true;--%>
+        <%--ap3.init();--%>
+        <%--ap3.play();--%>
+        <%--ap3.music.title=val5;--%>
+        <%--ap3.music.author=val4;--%>
+        <%--ap3.music.url='${pageContext.request.contextPath}'+val2;--%>
+        <%--ap3.music.pic='../music/musicimg/'+val3;*!/--%>*/
+        ap3.pause();
+        $(".aplayer").html($("#hahahaha").html());
+        ap3 = new APlayer({
+            element: document.getElementById('player3'),//样式1
+            narrow: false,
+            autoplay: false,
+            showlrc: true,
+            music: {
+                title: val5,
+                author: val4,
+                url: ''+val2,
+                pic: ''+val3
+            }
+        });
+        ap3.init();
+        ap3.play();
+    }
+</script>
+</body>
+</html>

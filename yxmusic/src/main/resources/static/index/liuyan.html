@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <style>
+        textarea {
+            margin: auto;
+            overflow: auto;
+            resize: inherit;
+            width: 500px !important;
+            height: 113px !important;
+        }
+
+        #weee {
+            width: 600px;
+            height: 184px;
+        }
+
+        #sub {
+            position: relative;
+            top: 8px;
+            left: 476px;
+        }
+
+        #wyly {
+            position: fixed;
+            top: 47px;
+            left: 1094px;
+        }
+        #msg{
+            position: fixed !important;
+            top: 174px;
+            left: 814px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div id="msg" style="position: relative;">
+    <div style="position: relative">
+
+        <div class="collapse" id="collapseExample" style="position: relative;">
+            <div class="well" id="weee">
+                <form action="" id="lyform">
+                    <input type="hidden" name="messageName" value="${user.userName}">
+                    <input type="hidden" name="dateTime" value="<%=new Date().toLocaleString()%>">
+                    <textarea name="textarea" class="form-control" cols="30" rows="10" minlength="10"
+                              maxlength="200"></textarea>
+                    <button class="btn btn-default" type="button" id="sub" onclick="ly()">留言</button>
+                </form>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+                aria-expanded="false" aria-controls="collapseExample" id="wyly">
+            我要留言
+        </button>
+
+    </div>
+</div>
+</body>
+</html>

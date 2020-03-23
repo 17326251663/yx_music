@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/rf.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <title>MV展示馆</title>
+    <style>
+        .video {
+            position: fixed;
+            top: 17%;
+            left: 25%;
+            width: 50% !important;
+            z-index: 111119;
+        }
+
+        .closeMv {
+            position: fixed;
+            z-index: 120000;
+            color: #ffffff87;
+            top: 18%;
+            font-size: 30px;
+            right: 27%;
+            cursor: pointer;
+            text-shadow: black 3px 3px 2px;
+        }
+
+        .mvList {
+            margin-left: 0;
+        }
+
+        .oneMvList {
+            position: relative;
+            cursor: pointer;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            font-family: -webkit-pictograph;
+            font-size: 13px;
+            font-weight: 100;
+        }
+
+        .oneMvList:hover div::after {
+            content: "▶";
+            width: 90%;
+            height: 90%;
+            color: #ffffff85;
+            background-color: #00000054;
+            position: absolute;
+            bottom: 14%;
+            font-size: 70px;
+            text-align: center;
+            line-height: 209%;
+        }
+
+        .oneMvList:active div::after {
+            content: "II";
+        }
+
+    </style>
+</head>
+<body>
+<div class="col-md-4 col-md-offset-4" style="position: relative;display: none" id="MV">
+    <div class="closeMv">×</div>
+    <video src="http://127.0.0.1/mv/mov_bbb.mp4" controls class="video" loop title="" controlslist="nodownload"></video>
+</div>
+<div class="">
+    <form action="#" id="search">
+        <input type="text" placeholder="请输入MV/Singer" class="touMing form-control" name="condition" style="display: inline-block;width: 95.68%"><button class="btn" onclick="return initMyCondition()">搜索</button>
+        <input type="hidden" name="pageNum" value="1">
+    </form>
+</div>
+
+<div class="row MVT">
+    <div class="jumbotron" style="padding-left: 40px;background-image: url('/static/images/15.jpg')">
+        <h1>欢迎来到MV馆!</h1>
+        <p>畅想MV云世界</p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">开启MV云之旅</a></p>
+    </div>
+</div>
+
+<div class="row mvList" style="width: 100%;">
+
+   <!-- <div class="panel panel-default">
+        <div class="panel-heading">分类</div>
+        <div class="panel-body row" style="width: 100%;">
+            <div class="col-md-3 oneMvList">
+                <video src="http://127.0.0.1/mv/mov_bbb.mp4" style="width: 100%;"></video>
+                <div></div>
+            </div>
+            <div class="col-md-3 oneMvList">
+                <video src="http://127.0.0.1/mv/mov_bbb.mp4" style="width: 100%;"></video>
+                <div></div>
+            </div>
+            <div class="col-md-3 oneMvList">
+                <video src="http://127.0.0.1/mv/mov_bbb.mp4" style="width: 100%;"></video>
+                <div></div>
+            </div>
+            <div class="col-md-3 oneMvList">
+                <video src="http://127.0.0.1/mv/mov_bbb.mp4" style="width: 100%;"></video>
+                <div></div>
+            </div>
+        </div>
+    </div>-->
+</div>
+<script>
+    $(".closeMv").click(function () {
+        $("#MV").css("display", "none");
+        var video = $("#MV video");
+        video[0].pause();
+    });
+
+    function initIfyMv() {
+        $.ajax({
+            url: "/yx-mv/mv",
+            method: "get",
+            dataType: "json",
+            statusCode: {
+                200: function (data) {
+
+                    var list = $(".mvList");
+
+                    list.html("");
+
+                    $(data).each(function (data) {
+
+                        var content = '';
+
+                        /*分类表格*/
+                        content+=('<div class="panel panel-default">\n' +
+                            '<div class="panel-heading">' + this.ifyname + '</div>\n' +
+                            '<div class="panel-body row" style="width: 100%;">');
+
+                        /*再次循环填充MV*/
+                        $(this.yxmv).each(function () {
+
+                            content+=('<div class="col-md-3 oneMvList">\n' +
+                                '<video src="'+this.murl+'"  style="width: 100%;height: 154.99px;background-color: black"></video>\n' +
+                                '<div></div>MV:' +this.mtitle+
+                                '&nbsp;&nbsp;Singer:'+this.mname+'('+this.msize+'MB)</div>');
+
+                        });
+                        
+                        if (this.yxmv.length == 0) {
+                            content+='暂无资源MV哦';
+                        }
+
+                        content+=('</div>\n' +
+                            '</div>');
+
+                        list.append(content);
+                    })
+
+                }
+            }
+        })
+    }
+
+    function initMyCondition(){
+        $.ajax({
+            url:"/yx-mv/mv",
+            method:"post",
+           data:$("#search").serialize(),
+            statusCode:{
+                200:function (data) {
+
+                    var list = $(".mvList");
+                    list.html("");
+
+                    if ($(data.list).length==0){
+                        list.prepend('<div class="row mvList2" style="width: 100%;margin-left: 0">暂无此资源 <button onclick="initIfyMv()">返回首页</button></div>');
+                    }
+
+                    list.prepend('<div class="row mvList2" style="width: 100%;margin-left: 0">我的搜索: <button onclick="initIfyMv()">返回首页</button><br></div>');
+
+                    $(data.list).each(function () {
+                    $(".mvList2").append('<div class="col-md-3 oneMvList">\n' +
+                        '<video src="'+this.murl+'"  style="width: 100%;height: 154.99px;background-color: black"></video>\n' +
+                        '<div></div>MV:' +this.mtitle+
+                        '&nbsp;&nbsp;Singer:'+this.mname+'('+this.msize+'MB)</div>');
+                    })
+                }
+            }
+        })
+
+        return false;
+    }
+
+    $(function () {
+        initIfyMv();
+
+        $(".mvList").on("click",".oneMvList",function () {
+
+            var mv = $("#MV");
+            var video = $("#MV video");
+
+            video.prop("src", $(this).find("video").prop("src"));
+            mv.css("display", "inline-block");
+
+            video[0].play();
+            ap3.pause();
+        })
+    })
+</script>
+</body>
+</html>

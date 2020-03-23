@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+	namespace必须为对应dao接口的全类名
+ -->
+<mapper namespace="com.czxy.yx.mapper.MusicbaseMapper">
+<select id="selectAllmusic" resultType="com.czxy.pojo.Musicbase">
+    select * from musicbase
+    <where>
+        <if test="musicname != '%null%' and musicname !='%%'">
+            and musicName like #{musicname} or singer like #{musicname} or ify1id = (select ifyid from classify = #{musicname})
+        </if>
+        <if test="order != null and order !=0">
+            and ifyid = #{order}
+        </if>
+    </where>
+    order by uploadTime desc
+</select>
+</mapper>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+    <title>Title</title>
+    <style>
+    .card{
+        border: 1px solid #fafafa;
+        box-shadow: rgba(56, 56, 56, 0.52) 1px 1px 1px 1px;
+        margin: auto;
+        background-color: rgba(255, 255, 255, 0.6);
+        text-align: center;
+        border-radius: 4px 4px 4px 4px;
+        height: 400px;
+        width: 80%;
+    }
+        .border{
+            border: black 1px solid;
+            box-sizing: border-box;
+            position: absolute;
+            bottom: 5%;
+        }
+        .one{
+            height: 200px;
+            line-height: 200px;
+            font-size: 60px;
+            font-weight: 800;
+            font-family: monospace;
+        }
+        .two{
+            height: 120px;
+            line-height: 120px;
+            font-size: 60px;
+            font-weight: 800;
+            font-family: monospace;
+        }
+        .three{
+            height: 100px;
+            line-height: 100px;
+            font-size: 60px;
+            font-weight: 800;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+<span style="font-family: 'Arial Black'">下载热榜</span>
+
+
+<!--卡片-->
+<div class="card">
+    <div class="row" style="position: relative;height: 100%">
+        <!--前10位-->
+        <table class="table table-condensed" style="margin-left: 15px;width: 97%;margin-top: 10px">
+
+            <tr>
+                <th style="text-align: center">排名</th>
+                <th style="text-align: center">歌曲名</th>
+                <th style="text-align: center">发布者</th>
+                <th style="text-align: center">演唱者</th>
+                <th style="text-align: center">下载量</th>
+            </tr>
+            <!-- On rows -->
+            <!-- On cells (`td` or `th`) -->
+            <tbody id="tlist">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(function () {
+       initMusicOfHot();
+    });
+    function initMusicOfHot() {
+        $.ajax({
+            url:"/yx-music/initMusicOfHot",
+            method : "get",
+            contentType : "application/json;charset=utf-8",
+            statusCode : {
+                200 : function (data) {
+                    $(data).each(function (index,v) {
+                        $("#tlist").append(`
+                        <tr>
+                         <td>${index+1}</td>
+                         <td>${v.musicname}</td>
+                         <td>${v.uname}</td>
+                         <td>${v.singer}</td>
+                         <td>
+                         ${v.uploadnum}
+                         <span class='mid' value='${ v.mid }'></span>
+                         <span class='musicUrl' value='${v.musicurl}'></span>
+                         <span class='imgUrl' value='${v.imgurl}'></span>
+                         <span class='musicName' value='${v.musicname}'></span>
+                         <span class='singer' value='${v.singer}'></span>
+                         </td>
+                        </tr>`);
+                    });
+
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

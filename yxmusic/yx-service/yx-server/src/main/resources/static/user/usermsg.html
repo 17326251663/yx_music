@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/rf.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <style>
+        .magin{
+            margin-bottom: 40px;
+            color: white;
+            font-size: 25px;
+        }
+        .mybutton{
+            background-color: white;
+        }
+        .guanzhu{
+            position: absolute;
+            right: 30%;
+            top: 0;
+            background-color: #61e461c4;
+            padding: 10px 40px;
+            font-family: cursive;
+            font-size: 25px;
+        }
+        #olist img{
+            width: 100px;
+            height: 100px;
+            margin-right: 160px;
+        }
+        #olist li{
+            background-color: #e7e7e7f2;
+            height: 104px;
+            line-height: 104px;
+            padding-left: 100px;
+            list-style: decimal-leading-zero;
+            font-size: 23px;
+            cursor: pointer;
+        }
+        .margin-right{
+            margin-right: 770px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div style="margin-top: 10px;width: 100%">
+    <div class="row">
+        <div class="col-md-2 col-md-offset-2"><img src="../images/11.jpg" alt="头像" class="img-thumbnail other-tou" style="
+        height: 350px;
+        width: 350px;
+        box-sizing: border-box;
+        border-radius: 50%;"
+        ></div>
+        <div class="col-md-8">
+            <div class="col-md-12 magin" style="margin-bottom: 60px;"><h2 class="other-loginname">云音用户</h2></div>
+            <div class="col-md-12 magin" >云音账号: <span class="other-loginid"></span></div>
+            <div class="col-md-12 magin" >关注: <span class="other-concern">999+</span></div>
+            <div class="col-md-12 magin" >粉丝: <span class="other-fans">999+</span> <button class="btn guanzhu" onclick="guanzhu(this)">+关注</button><span value="" id="otherUid"></span></div>
+        </div>
+
+        <div class="col-md-12" style="
+        margin-top: 20px;
+        position: absolute;
+        top: 376px;
+        z-index: 10;"
+        >
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default mybutton" onclick="otherbest('/yx-music/getOtherMusic/')">他喜欢</button>
+                <button type="button" class="btn btn-default mybutton" onclick="otherbest('/yx-music/getOtheryun/')">他上传的音乐</button>
+
+            </div>
+
+
+            <!--资源列表-->
+            <div id="olist" style="height: 43em;overflow: auto;">
+            点击查看他的动态哦~
+            </div>
+
+        </div>
+        <div class="col-md-12" style="margin-top: 34px;"><hr></div>
+    </div>
+</div>
+
+<script>
+
+function musicType(ele) {
+    return '<li><img src="'+ele.imgurl+'" alt="图片">歌曲名:<span class="margin-right">'+ele.musicname+'</span>演唱者:<span class="margin-right">'+ele.singer+'</span><span onclick="collectMusic('+ele.mid+')">收藏❤</span></li>';
+}
+
+    function guanzhu(ele) {
+        var url = $(ele).next().attr("value");
+        $.ajax({
+            url:url,
+            method:"put",
+            statusCode:{
+                201:function (data) {
+                    userMsg(uidQ);
+                }
+            }
+        })
+    }
+
+    function otherbest(url) {
+
+        var uid = $("#otherUid").attr('value');
+
+         uid =uid.substring(uid.lastIndexOf('/'));
+
+        $.ajax({
+            url:url+uid,
+            method:"get",
+            statusCode:{
+                200:function (data) {
+
+                    var olist = $("#olist");
+
+                    if (data.length==0){
+                        olist.text('暂无踪迹~');
+                        return;
+                    }
+                    olist.html("");
+
+                    $(data).each(function () {
+                        olist.append(musicType(this));
+                    });
+                }
+            }
+        })
+    }
+
+    function collectMusic(mid) {
+        $.ajax({
+            url: "/yx-music/collectMusic/" + mid,
+            method: "put",
+            dataType:"text",
+            statusCode: {
+                201:function (data) {
+                    if (data=='success'){
+                        alert('收藏成功');
+                    } else {
+                        alert('收藏失败,已收藏');
+                    }
+                }
+            }
+        });
+        return false;
+    }
+</script>
+</body>
+</html>

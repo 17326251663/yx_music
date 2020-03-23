@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="icon" href="../start/SynLogo.ico">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/rf.js"></script>
+    <style>
+        .del {
+            margin-left: 1em;
+            text-align: right;
+            font-weight: 700;
+            font-size: 20px;
+            vertical-align: middle;
+        }
+    </style>
+    <script>
+        $(function () {
+            getmyyn();
+        });
+
+        function getmyyn() {
+            $.ajax({
+                url: "/yx-music/getmyyun",
+                method: "get",
+                dataType: "json",
+                statusCode: {
+                    200: function (data) {
+                        var ylist = $("#yunlist");
+                        ylist.html("");
+                        $(data).each(function () {
+                            ylist.append("<div class='col-sm-3 col-md-3 " + this.mid + "' ><div class='thumbnail'><img style='height: 270px;' src='" + this.imgurl + "' alt='" + this.singer + "'>" +
+                                "<div class='caption'>" +
+                                "<h3 style='font-size: 16px;'>" + this.musicname + "</h3>" +
+                                "<p style='font-size: 10px;'>演唱者:" + this.singer + "</p>" +
+                                "<p style='font-size: 10px;'>播放次数:" + this.playnum + "</p>" +
+                                "<p style='font-size: 10px;'>下载次数:" + this.uploadnum + "</p>" +
+                                "<p style='font-size: 10px;'><a href='#' class='btn btn-primary' role='button' onclick='bofang2_1(this," + this.mid + ")'>播放<i class='bo_i'></i></a> <a href='" + this.musicurl + "' class='btn-default btn' onclick='return downloads(" + this.mid + ")' download='" + this.musicname + "'>下载:<i></i></a><a href='#' onclick='delByMid(" + this.mid + ")'><span class=\"glyphicon glyphicon-trash del\" aria-hidden=\"true\"></span></a><a href='#' class='btn' role='button' onclick='bofang(this," + this.mid + ")'>管理<span class='glyphicon glyphicon-cog' aria-hidden='true'> </span></a>" +
+                                " <span class='mid' value='" + this.mid + "'></span>" +
+                                " <span class='musicUrl' value='" + this.musicurl + "'></span> " +
+                                "<span class='imgUrl' value='" + this.imgurl + "'></span>" +
+                                "<span class='musicName' value='" + this.musicname + "'></span>"
+                                + "<span class='singer' value='" + this.singer + "'></span>" +
+                                "</p>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>");
+                        })
+                    }
+                }
+
+            })
+        }
+
+        function delByMid(mid) {
+            if (!confirm("您确定要删除当前资源吗(回收站可恢复)？")) return;
+            $(`.${mid}`).remove();
+            $.ajax({
+                url: "/yx-music/" + mid,
+                method: "delete"
+            })
+        }
+
+        function recycle() {
+            $.ajax({
+                url: "/yx-music/recycle",
+                method: "get",
+                contentType: "application/json;charset=utf-8",
+                statusCode: {
+                    200: function (data) {
+                        var ylist = $("#yunlist");
+                        ylist.html(`
+                                <ol class="breadcrumb" style="background-color: rgba(255,255,255,0.24)">
+                                <li><a href="javascript:getmyyn()">我的音乐云盘</a></li>
+                                <li class="active">回收站</li>
+                                </ol>
+                        `);
+                        $(data).each(function () {
+                            ylist.append(`
+                        <div class='col-sm-3 col-md-3 ${this.mid}' ><div class='thumbnail' style="margin: 0"><img style='margin-right: 15%;height: 90px;width: 90px;display: inline-block' src='${this.imgurl}' alt='${this.singer}'>
+                        <!--恢复-->
+                        <button type="button" class="btn btn-default btn-lg" onclick="recover(${this.mid})">
+                        <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> 恢复
+                        </button>
+
+                        <div class='caption'>
+                        <h3 style='font-size: 16px;white-space: pre;overflow: hidden;margin-top: 5px'>${this.musicname}</h3>
+                       </div>
+                       </div>
+                       </div>
+                        `);
+                        })
+                    }
+                }
+            })
+        }
+
+        function recover(mid) {
+                $.ajax({
+                    url: "/yx-music/music_recover/"+mid,
+                    method : "get",
+                    statusCode: {
+                        204:function () {
+                            $(`.${mid}`).remove();
+                        }
+                    }
+                })
+        }
+    </script>
+</head>
+<body>
+<!--回收站-->
+
+<button type="button" class="btn btn-default btn-md" style="position: fixed;top: 20%;right: 3%;z-index: 10" onclick="recycle()">
+    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 回收站
+</button>
+
+<div class='row' style='width: 100%;font-family: fantasy;text-overflow : ellipsis' id='yunlist'>
+    <!--    <div class='col-sm-3 col-md-3'><div class='thumbnail'><img src='../images/11.jpg' alt='...'>-->
+    <!--            <div class='caption'>-->
+    <!--                <h3>Thumbnail label</h3>-->
+    <!--                <p>...</p>-->
+    <!--                <p><a href='#' class='btn btn-primary' role='button'>Button</a> <a href='#' class='btn btn-default' role='button'>Button</a></p>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+</div>
+
+</body>
+</html>

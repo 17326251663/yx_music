@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/rf.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <link rel="stylesheet" href="../css/chat/chat.css">
+    <style>
+
+    </style>
+</head>
+<body>
+<div class="row" style="width: 100%;">
+    <div class="col-md-2 friendList">
+        <ul>
+            <li><img src="../images/15.jpg" alt="">网名</li>
+
+        </ul>
+    </div>
+    <div class="col-md-9 chatPage">
+        <h4><span class="loginnid"></span><button class="btn btn-default touMing">关闭所有会话</button><button style="position: absolute;right: 15px" class="btn btn-default touMing" onclick='window.open("/friend/friendRequest.html","_blank")'>申请列表<span class="requestNum" ></span></button></h4>
+        <hr>
+        <div style="background: white;height: 325px;overflow: auto" id="friendChatPage" class="touMing">
+        <!--    //<p align="center">欢迎来到微享云音</p>-->
+
+            <div class="col-md-12 row message " style="width: 100%;">
+                <div class="col-md-1">
+                    <img src="../images/11.jpg" alt="" class="tou">
+                </div>
+                <div class="col-md-11 myleft">
+                    <div class="col-md-12" style="color: #a1a1a1;font-size: 10px">我是作者</div>
+                    <span class="othertext">欢迎来到微享云音聊天室,请文明用语(解决卡顿:请点击退出按钮退出聊天室哦)</span>
+                    <div class="col-md-12 time">2018/11/1 12:12</div>
+                </div>
+            </div>
+
+        </div>
+        <div CLASS="sendBox" style="display: none">
+            <button class="btn btn-default touMing" id="shareresource">分享资源</button>
+
+            <input type="text" class="form-control friendText touMing" style="    width: 84.29%;
+    display: inline-block;" value="">
+
+            <button class="btn btn-default touMing" title="" onclick="sendText()">发送</button>
+        </div>
+    </div>
+</div>
+
+<!--音乐资源列表-->
+<div id="musiclistParent">
+
+
+</div>
+<!--存放目标基本信息-->
+<div>
+    <form action="">
+        <input type="hidden" class="timg">
+        <input type="hidden" class="mytimg">
+        <input type="hidden" class="friendUid">
+    </form>
+</div>
+<script>
+
+    $(function () {
+        initRequestNum();
+        initFriend();
+    });
+
+    function initRequestNum() {
+        $.ajax({
+            url:"/yx-friend/lookRequest",
+            method:"get",
+            dataType :"text",
+            statusCode:{
+                200: function (data) {
+                    if (data != 0) {
+                        $(".requestNum").text(data);
+                    }
+                }
+            }
+        })
+    }
+    
+    function initFriend() {
+        $.ajax({
+            url:"/yx-friend/getFriends",
+            method:"get",
+            dataType:"json",
+            statusCode:{
+                200:function (data) {
+
+                    var list = $(".friendList ul");
+                    list.html("");
+
+                    if (data.length == 0) {
+                        list.html("暂无好友");
+                        return;
+                    }
+                    $(data).each(function () {
+                        list.append('<li title="ID:'+this.user.loginname+'('+this.user.loginid+')" class="'+this.user.uid+'"><img src="'+this.user.timg+'">'+this.user.loginname+' <span></span></li>');
+                        if (this.messageNum!=0){
+                            $("."+this.user.uid).find('span').addClass('firendMessage').text(this.messageNum);
+                        }
+                    });
+
+                    $(".friendList li").click(function () {
+
+                        $(".friendList li").removeClass("hover");
+
+                        $(".friendUid").val($(this).prop("class"));
+
+                        intitList($(this).prop("class"));
+
+                        $(this).addClass("hover");
+
+                        $(".loginnid").text($(this).prop("title").substring(3));
+
+                        $(".timg").val($(this).find('img').prop("src"));
+
+
+                        $(this).find('span').html('').removeClass('firendMessage');
+
+                    });
+
+                }
+            }
+        })
+    }
+
+    function intitList(uid) {
+        $.ajax({
+            url:"/yx-friend/getFriendMessage/"+uid,
+            method:"get",
+            dataType:"json",
+            statusCode:{
+                200:function (data) {
+
+                    var list = $("#friendChatPage");
+
+                    list.html("");
+
+                    $(data).each(function () {
+
+                        /*判断是否是资源类型*/
+                        if (this.messageType == '1') {
+                                list.append("    <div class='col-md-12 row message' style='width: 100%;'>" +
+                                    "        <div class='col-md-1'>" +
+                                    "            <img src='"+$(".timg").val()+"' alt='' class='tou'>" +
+                                    "        </div>" +
+                                    "        <div class='col-md-11 myleft'>" +
+                                    "            <div class='col-md-12' style='color: #a1a1a1;font-size: 10px'></div>" +
+                                    "            <span class='oneresource'><img src='"+this.musicbase.imgurl+"' alt='' class='tou'> <span>"+this.musicbase.musicname+"" +
+                                    "            <span class='glyphicon glyphicon-play-circle mbo' aria-hidden='true' onclick='bofang2_1(this," + this.musicbase.mid + ")'></span>" +
+                                    "            <span class='mid' value='" + this.musicbase.mid + "'></span>" +
+                                    "            <span class='musicUrl' value='" + this.musicbase.musicurl + "'></span>" +
+                                    "            <span class='imgUrl' value='" + this.musicbase.imgurl + "'></span>" +
+                                    "            <span class='musicName' value='" + this.musicbase.musicname + "'></span>" +
+                                    "            <span class='singer' value='" + this.musicbase.singer + "'></span>" +
+                                    "            </span> </span>" +
+                                    "            <div class='col-md-12 time'>"+this.sendTime+"</div>" +
+                                    "        </div>" +
+                                    "    </div>")
+
+                            /*为普通类型*/
+                        } else {
+
+                                list.append('    <div class="col-md-12 row message" style="width: 100%;">' +
+                                    '        <div class="col-md-1">' +
+                                    '            <img src="' + $(".timg").val() + '" class="tou">' +
+                                    '        </div>' +
+                                    '        <div class="col-md-11 myleft">' +
+                                    '            <div class="col-md-12" style="color: #a1a1a1;font-size: 10px"></div>' +
+                                    '            <span class="othertext">' + this.messageContent + '</span>' +
+                                    '            <div class="col-md-12 time">' + this.sendTime + '</div>' +
+                                    '        </div>' +
+                                    '    </div>')
+                            }
+
+                        setTimeout(setMessageStatus($(".friendUid").val()),200);
+                        scrollBottom();
+                    });
+                }
+            }
+        })
+    }
+
+
+</script>
+<script src="../js/chat/shareresource.js"></script>
+</body>
+</html>

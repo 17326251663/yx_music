@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/APlayer.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/index.css">
+    <link rel="icon" href="../start/SynLogo.ico">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <!--功能模块js-->
+    <script src="../js/indexActon.js"></script>
+    <style>
+        @font-face {
+            font-family: 'icomoon';
+            src: url('../fonts/icomoon.eot?a8rqf0');
+            src: url('../fonts/icomoon.eot?a8rqf0#iefix') format('embedded-opentype'),
+            url('../fonts/icomoon.ttf?a8rqf0') format('truetype'),
+            url('../fonts/icomoon.woff?a8rqf0') format('woff'),
+            url('../fonts/icomoon.svg?a8rqf0#icomoon') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #nav{
+            left: -270px;
+            background-color: rgb(255, 255, 255);
+            border: 1px #0000001c solid;
+            position: absolute;
+            height: 99.6%;
+            cursor: pointer;
+            box-shadow: #a8a8a8 3px 6px 7px -1px;
+        }
+        #navb{
+            background-color: rgb(255, 255, 255);
+            border: 1px #0000001c solid;
+            height: 703px;
+            cursor: pointer;
+            box-shadow: #a8a8a8 3px 6px 7px -1px;
+        }
+
+        #nav li , #navb li{
+            text-align: center;
+            list-style: none;
+            line-height: 60px;
+            overflow: hidden;
+        }
+        #nav li:hover ,#navb li:hover{
+            /*background-color: #a8a8a8;*/
+            transition: all 0.2s linear;
+            box-shadow: #a8a8a8 -1px 1px 30px -2px;
+        }
+        i {
+            font-style: normal;
+            font-family: 'icomoon';
+        }
+
+        i:hover {
+            color: white;
+        }
+        #xiangqing{
+            position: absolute;
+            width: 75px;
+            /* height: 0px; */
+            /* size: 10px; */
+            font-size: 13px;
+            color: #000000b5;
+            /* text-align: center; */
+            background-color: rgb(255, 255, 255);
+            border: none;
+            left: 40px;
+            top: 11px;
+        }
+        #xiangqing:active{
+            border: none;
+        }
+        #lefthover{
+            z-index: 999;
+            position: fixed;
+            top: 50%;
+            left: -3px;
+            margin-top: -50px;
+            width: 33px;
+            height: 100px;
+            background-color: rgba(0, 0, 7, 0.37);
+            border-radius: 0px 34px 34px 0;
+            box-sizing: border-box;
+            border: #a1a1a1 1px solid;
+        }
+        #lefthover::before{
+            z-index: 1000;
+            content: "";
+            top: 50%;
+            left: 12px;
+            position: fixed;
+            width: 8px;
+            margin-top: -25px;
+            height: 50px;
+            background-color: rgb(192, 192, 192);
+            border-radius: 15px;
+        }
+        #nav:hover , #navb:hover{
+            transition: 0.5s all linear;
+            cursor: pointer;
+            left: 0;
+        }
+        #nav:hover{
+            z-index: 999;
+        }
+        .panel-default > .panel-heading{
+            background-color: #17c1425c !important;
+        }
+    </style>
+</head>
+<body style="overflow: hidden;width: 100%;height: 100%;position: relative;">
+
+<div class="row" style="overflow: hidden">
+    <ul id="nav" class="col-md-12 col-sm-12 col-xs-12">
+        <li style="height: 118px;background-color:rgba(255,80,204,0);border-bottom: 1px #a8a8a8 solid">
+            <!--左拉框-->
+            <span id="lefthover"></span>
+
+            <div style="margin: 10px auto">
+                <img src="../start/q3.jpg" alt="" style="width: 40px;border-radius: 50%">
+            </div>
+            <div class="row">
+                <div class="col-md-6" style="font-size: 12px;">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" id="xiangqing">
+                        <!--用户详情-->
+                    </button>
+                </div>
+                <a href="/user?method=logout"><div class="col-md-6 " style="font-size: 12px;">退出</div></a>
+            </div>
+        </li>
+        <li onclick="obtainlist()"><i></i><span>共享云音</span>
+
+        </li>
+        <li><i style="color: red"></i><span>下载热榜</span>
+        </li>
+        <li><i></i><span>个性电台</span>
+        <li onclick="myfavorite()"><i></i><span>我喜欢</span>
+        </li>
+        <li onclick="uploadfunciton()"><i></i><span>上传音乐</span>
+        </li>
+        <li onclick="cookieList()"><i></i><span>播放历史</span>
+        </li>
+        <li onclick="lmessage()"><i></i><span>留言板</span>
+        </li>
+    </ul>
+
+    <ul id="navb" class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+        <li style="margin: 33px 0 24px 0px;border: none;box-shadow: none;vertical-align: middle;font-size: 22px;font-family: cursive;"><img src="../images/logo.gif" alt="" style="margin-top: -6px">微享云音</li>
+        <hr>
+        <li><i></i><span>搜索</span></li>
+        <li><i></i><span>发现音乐</span></li>
+        <li><i></i>MV</li>
+        <li><i></i>朋友</li>
+        <li><i></i></li>
+        <br>
+        <hr>
+        <br>
+        <li><i></i>我的音乐云盘</li>
+    </ul>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <form action="/user?method=updateUser" onsubmit="return sub(this)">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">用户信息 <span id="updateMsg" style="color: red"></span></h4>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="method" value="updateUser">
+                        <input type="hidden" name="uid" value="${user.uid}">
+                        <label for="exampleInputEmail1">登录 账户 </label>
+                        <span style="color: red"></span>
+                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Email" readonly name="loginName" value="${user.loginId}">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">用户 姓名</label>
+                        <span style="color: red"></span>
+                        <input type="text" class="form-control" id="exampleInputEmail2" placeholder="请输入姓名" name="userName" value="${user.loginName}">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">登录 密码</label>
+                        <span style="color: red"></span>
+                        <input type="password" class="form-control" id="exampleInputEmail3" placeholder="请输入登录密码" name="loginPassword" value="${user.loginPassword}">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">修改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function sub(ele) {
+
+    var name = $("#exampleInputEmail2");
+    var pwd = $("#exampleInputEmail3");
+
+    //判断姓名
+    var regex1 = /^\s*$/;
+    if (regex1.test(name.val())){
+        name.siblings("span").html("姓名不能为空");
+    return false;
+    }
+    name.siblings("span").html("");
+    //判断密码
+    var regex2 = /^\w{1,}$/;
+    if(!regex2.test(pwd.val())){
+        pwd.siblings("span").html("密码由字母数字组成");
+        return false;
+    }
+
+    pwd.siblings("span").html("");
+
+    //调用登录
+    $.post("/user?method=updateUser",$(ele).serialize(),function (data) {
+
+        if (data!="修改密码"){
+            alert("账户修改成功");
+        }else {
+            location.href = "/index.html";
+        }
+
+    });
+    return false;
+
+}
+
+obtainlist();
+
+/*这是总资源列表*/
+function obtainlist() {
+    $.post("/music?method=finAllMusic",function (data) {
+        /*获取到标签*/
+        var list = $("#list");
+        /*每次重新获取音乐列表之前先把标签内容清空*/
+
+        list.html("");
+        /*添加内容(歌曲)*/
+        $(data).each(function () {
+            /* 这里是歌单的一些隐藏信息,如图片路径,图片id,歌曲路径&ndash;*/
+            list.append(
+                " <div class='panel panel-default'> " +
+                "<div class='panel-heading mheader'>歌手:"+this.singer+"<span class='updateTime' style='position: relative'>更新时间:"+this.uploadTime+"</span></div> " +
+                "<div class='panel-body'>" +
+                "歌曲名称: "+this.musicName+
+                "<span class='collect' style='font-family: cursive' onclick='shoucang(this)'><i class='bo_i'></i>收藏</span>" +
+                "<span style='font-family: cursive' class='bo' onclick='bofang(this)'>播放:<i class='bo_i'></i></span>"+
+                "<a href='#'><span style='font-family: cursive' class='bo'>下载:<i></i></span></a>"+
+                " <span class='mid' value='"+this.mid+"'></span>" +
+                " <span class='musicUrl' value='"+this.musicUrl+"'></span> " +
+                "<span class='imgUrl' value='"+this.imgUrl+"'></span>"+
+                "<span class='musicName' value='"+this.musicName+"'></span>"
+                +"<span class='singer' value='"+this.singer+"'></span> </div>"
+            );
+        })
+
+
+
+    },"json");
+}
+</script>
+</body>
+</html>

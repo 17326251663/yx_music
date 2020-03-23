@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/rf.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/login/login.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <script>
+        $(function () {
+
+            $("#bind").click(bind);
+            $("#unbind").click(unbind);
+            $("#upPassword").click(uppwd);
+
+        });
+
+        function getcode() {
+
+            var tel = $("#bindform input[name=telephone]");
+
+            if (tel.val().length != 11){
+                alert("请输入正确手机号");
+                return;
+            }
+
+            $.ajax({
+                url:"/yx/getCode/"+tel.val(),
+                method:"get",
+                async:false,
+                daTaype:"text",
+                statusCode:{
+                    200:function (data) {
+                        if (data == "success") {
+                            jiazai(document.getElementById("getcode"));
+                            alert("验证码已发送");
+                        }else {
+                            alert(data);
+                        }
+                    },
+                    500:function () {
+                        alert("出错啦~");
+                    }
+                }
+            });
+
+        }
+
+        function uppwd() {
+            $("#upPwdPage").html('<div class="alert alert-warning alert-danger" role="alert" style="position: fixed;left: 43%;top: 25%;"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\n' +
+                '        <form action="#" id="upPasswordForm">\n' +
+                '            <p align="center">修改密码</p>\n' +
+                '            <input type="text" name="old" required minlength="6" maxlength="20" placeholder="原密码:" id="oldPassword"><br>\n' +
+                '            <input type="password" name="new" required minlength="6" maxlength="20" placeholder="新密码:" id="newPassword"><br>\n' +
+                '            <input type="button" onclick="upPassword()" style="width: 100%;" value="修改密码">\n' +
+                '        </form>\n' +
+                '    </div>')
+        };
+
+
+        function bind() {
+            $.ajax({
+                url:"/yx/isBind",
+                method:"get",
+                dataType:"text",
+                statusCode:{
+                    200:function (data) {
+
+                        if (data != "Yes") {
+                            alert(data);
+                            return;
+                        }
+                        $("#bindPage").html('<div class="alert alert-warning alert-dismissible" role="alert" style="position: fixed;top: 25%;left: 40%;background-color: whitesmoke">\n' +
+                            '    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\n' +
+                            '    <form action="#" id="bindform">\n' +
+                            '        <p align="center">手机号绑定</p>\n' +
+                            '        <hr>\n' +
+                            '        <input type="number" placeholder="请输入手机号码:" style="width: 253px;" name="telephone" minlength="11" maxlength="11" value="" required><br>\n' +
+                            '        <input type="text" name="securityCode" placeholder="请输入验证码" required maxlength="6" minlength="6"><input type="button" style="width: 29%;" id="getcode" value="获取验证码" />\n' +
+                            '        <br>\n' +
+                            '        <button style="width: 99%;" type="submit">绑定</button>\n' +
+                            '    </form>\n' +
+                            '</div>');
+
+                        $("#getcode").click(getcode);
+                        $("#bindform").submit(function () {
+
+                            $.ajax({
+                               url:"/yx/bindTel",
+                                method:"post",
+                                dataType:"text",
+                                data:JSON.stringify($("#bindform").serializeJson()),
+                                contentType:"application/json;charset=utf-8",
+                                statusCode:{
+                                   200:function (data) {
+                                        if (data == 'success') {
+                                            alert("绑定成功");
+                                            $("#bindPage").html("");
+                                        }else {
+                                            alert(data);
+                                        }
+
+                                   },
+                                    500:function () {
+                                        alert("绑定失败");
+                                        return false;
+                                    }
+                                }
+
+                            });
+                            return false;
+                        });
+
+                    },
+                    500:function () {
+                        alert("服务器受到影响,请稍后重试");
+                    }
+                }
+            })
+        }
+
+        function unbind() {
+
+            if (!confirm("您真的要解绑手机号码?一旦确定无法恢复")){
+                return false;
+            }
+
+            $.ajax({
+                url:"/yx/unbind",
+                method:"get",
+                statusCode:{
+                    200:function (data) {
+                        if (data=='null'){
+                            alert("尚未绑定手机号码");
+                        } else {
+                            unbind2(data);
+                        }
+                    }
+                }
+            })
+        }
+
+        function unbind2(data) {
+
+            var code = prompt(data);
+
+            if (/^\s*$/.test(code)){
+                alert("请先输入");
+                unbind2(data);
+            }
+
+            $.ajax({
+                url:"/yx/unbind/"+code,
+                method:"get",
+                dataType:"text",
+                statusCode:{
+                    200:function (data) {
+                        if (data != 'success') {
+
+                            if (!confirm("验证码输入错误,您确定要继续吗?")){
+                                return false;
+                            }
+                            unbind2(data);
+
+                        }else {
+                            alert("解绑成功");
+                        }
+                    },
+                    500:function () {
+                        alert("绑定失败");
+                    }
+                }
+            })
+        }
+
+        function upPassword() {
+
+            if ($("#oldPassword").val().length < 6||$("#newPassword").val().length<6) {
+                alert("账号长度不能低于6");
+                return false;
+            }
+
+            $.ajax({
+                url:"/yx/user",
+                method:"put",
+                data: {
+                    'old':$("#oldPassword").val(),
+                    'new':$("#newPassword").val()
+                },
+                statusCode:{
+                    204:function () {
+                        alert("修改成功");
+                        location.href='../welcome.html?3';
+                    },
+                    500:function () {
+                        alert("修改失败,原密码有误");
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+<div class="row" style="margin-top: 40px;width: 100%;">
+    <div class="col-md-12">当前环境: <strong>正常</strong></div>
+    <hr>
+    <div class="col-md-1 col-md-offset-1">
+        <button class="btn btn-default" id="upPassword">密码修改</button>
+    </div>
+    <div class="col-md-1">
+        <button class="btn btn-default" id="bind">手机号绑定</button>
+    </div>
+    <div class="col-md-1">
+        <button class="btn btn-default" id="unbind">手机号解绑</button>
+    </div>
+</div>
+
+<div style="position: fixed" id="bindPage">
+</div>
+<div style="position: fixed" id="upPwdPage">
+</div>
+
+<script>
+
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+server:
+  port: 9091
+spring:
+  resources:
+    static-locations: classpath:static/,file:static/
+  redis:
+    host: 127.0.0.1  #redis服务地址
+  datasource:
+    url: jdbc:mysql://localhost:3306/cloudmusic?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+  application:
+    name: yx-server
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
